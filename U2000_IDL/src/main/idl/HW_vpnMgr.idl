@@ -1,0 +1,924 @@
+#ifndef HW_VPN_idl
+#define HW_VPN_idl
+
+// ********************************
+// *                              *
+// * HW_VPN.idl                   *
+// *                              *
+// ********************************
+//Include list
+#include "globaldefs.idl"
+#include "transmissionParameters.idl"
+#include "common.idl"
+#include "subnetworkConnection.idl"
+#include "managedElement.idl"
+#include "topologicalLink.idl"
+#include "terminationPoint.idl"
+#include "protection.idl"
+#include "performance.idl"
+#include "flowDomain.idl"
+#include "flowDomainFragment.idl"
+
+
+#pragma prefix "mtnm.huawei.com"
+
+
+module HW_vpnManager
+{
+  /**
+   * FDFrType_T
+   **/
+  typedef string FDFrType_T;
+  
+   enum UsedAsType_T
+   {
+    UA_WORKING,
+    UA_PROTECTION,
+    UA_DNI
+   };
+  
+  /**
+   * StaticMacAddress_T
+   **/
+   struct StaticMacAddress_T
+   {
+     string staticMacType;
+     string macAddress;
+     unsigned long peVID;
+     unsigned long ceVID;
+     globaldefs::NamingAttributes_T  tpName;
+     globaldefs::NVSList_T additionalInfo;
+   };
+
+
+  /**
+   * <p>Sequence of StaticMacAddress_T objects.</p>
+   **/
+  typedef sequence<StaticMacAddress_T> StaticMacAddressList_T;
+
+
+  /**
+   * SelfLearningMACAddress_T
+   **/
+   struct SelfLearningMACAddress_T
+   {
+     string macType;
+     string macAddress;
+     string peVID;
+     string ceVID;
+     globaldefs::NamingAttributes_T  tpName;
+     globaldefs::NVSList_T additionalInfo;
+   };
+
+  /**
+   * <p>Sequence of SelfLearningMACAddress_T objects.</p>
+   **/
+   typedef sequence<SelfLearningMACAddress_T> SelfLearningMACAddressList_T;
+
+  /**
+   * SelfLearningMACAddressTable_T
+   **/
+   struct SelfLearningMACAddressTable_T
+   {
+      globaldefs::NamingAttributes_T name;
+      SelfLearningMACAddressList_T macAddressList;
+      globaldefs::NVSList_T          additionalInfo;
+   };
+
+  /**
+   * <p>Sequence of SelfLearningMACAddressTable_T objects.</p>
+   **/
+   typedef sequence<SelfLearningMACAddressTable_T> SelfLearningMACAddressTableList_T;
+
+   interface SelfLearningMACAddressTableIterator_I 
+   {
+	boolean  next_n(in  unsigned long    how_many,
+			out SelfLearningMACAddressTableList_T     tableList)
+		 raises (globaldefs::ProcessingFailureException);
+
+	unsigned long getLength()
+		 raises (globaldefs::ProcessingFailureException);
+
+	void     destroy()
+		 raises (globaldefs::ProcessingFailureException);
+   };
+
+
+  /**
+   * SplitHorizonGroup_T
+   **/
+   struct SplitHorizonGroup_T
+   {
+     unsigned long shgID;
+     globaldefs::NamingAttributesList_T  shgMemberNameList;
+     globaldefs::NVSList_T additionalInfo;
+   };
+
+  /**
+   * <p>Sequence of SplitHorizonGroup_T objects.</p>
+   **/
+  typedef sequence<SplitHorizonGroup_T> SplitHorizonGroupAttrList_T;
+
+
+
+  /**
+   * MultipointServiceAttr_T
+   **/
+    struct MultipointServiceAttr_T
+    {
+      globaldefs::NVSList_T paraList;
+      StaticMacAddressList_T staticMacList;
+      SplitHorizonGroupAttrList_T shgList;
+      globaldefs::NVSList_T additionalInfo;
+    };
+
+  /**
+   * MatrixFlowDomainFragment_T
+   **/
+  struct MatrixFlowDomainFragment_T
+    {
+      globaldefs::NamingAttributes_T name;
+      string userLabel;
+      string nativeEMSName;
+      string owner;
+      globaldefs::ConnectionDirection_T  direction;
+      transmissionParameters::LayeredParameters_T transmissionParams;
+      MultipointServiceAttr_T multipointServiceAttr;
+      subnetworkConnection::TPDataList_T aEnd;
+      subnetworkConnection::TPDataList_T zEnd;
+      subnetworkConnection::SNCState_T  fdfrState;
+      performance::AdministrativeState_T  administrativeState;
+      boolean flexible;
+      FDFrType_T mfdfrType;
+      globaldefs::NVSList_T additionalInfo;
+    };
+
+
+  /**
+   * <p>Sequence of MatrixFlowDomainFragment_T objects.</p>
+   **/
+  typedef sequence<MatrixFlowDomainFragment_T> MatrixFlowDomainFragmentList_T;
+
+  /**
+   * <p>Sequence of MatrixFlowDomainFragment_T objects.</p>
+   **/
+  typedef sequence<MatrixFlowDomainFragment_T> FDFrRoute_T;
+
+  /**
+   * FlowDomainFragment
+   **/
+   struct FlowDomainFragment_T
+   {
+     globaldefs::NamingAttributes_T name;
+     string userLabel;
+     string nativeEMSName;
+     string owner;
+     globaldefs::ConnectionDirection_T  direction;
+     transmissionParameters::LayeredParameters_T transmissionParams;
+     MultipointServiceAttr_T multipointServiceAttr;
+     subnetworkConnection::TPDataList_T aEnd;
+     subnetworkConnection::TPDataList_T zEnd;
+     string networkAccessDomain;
+     boolean flexible;
+     performance::AdministrativeState_T administrativeState;
+     subnetworkConnection::SNCState_T fdfrState;
+     FDFrType_T fdfrType;
+     globaldefs::NVSList_T additionalInfo;
+   };
+   typedef sequence<FlowDomainFragment_T>  FlowDomainFragmentList_T;
+   
+    /**
+   * ServerConnectionType
+   **/
+   struct ServerConnectionType_T
+   {
+     globaldefs::NamingAttributesList_T nameList;
+     string channel;
+     UsedAsType_T usedAs;
+   };
+   
+   typedef sequence<ServerConnectionType_T>  ServerConnectionListType_T;
+   
+    /**
+   * ServerTrailType
+   **/
+   struct ServerTrailType_T
+   {
+     ServerConnectionListType_T serverConnectionList;
+     transmissionParameters::LayeredParameters_T transmissionParams;
+   };
+   
+   typedef sequence<ServerTrailType_T>  ServerTrailListType_T;
+   
+  /**
+   * FDFrCreateData_T
+   **/   
+   struct FDFrCreateData_T
+   {
+     string userLabel;
+     boolean forceUniqueness;
+     string nativeEMSName;
+     string owner;
+     globaldefs::ConnectionDirection_T  direction;
+     transmissionParameters::LayeredParameters_T transmissionParams;
+     MultipointServiceAttr_T multipointServiceAttr;
+     ServerTrailListType_T vendorExtensions;
+     FDFrType_T fdfrType;
+     globaldefs::NVSList_T additionalCreationInfo;
+   };
+   
+  /**
+   * FDFrModifyData_T
+   **/
+   struct  FDFrModifyData_T
+   {
+    string userLabel;
+    boolean forceUniqueness;
+    string owner;
+    MultipointServiceAttr_T multipointServiceAttr;
+    transmissionParameters::LayeredParameters_T transmissionParams;
+    subnetworkConnection::TPDataList_T aEnd;
+    subnetworkConnection::TPDataList_T zEnd;
+    globaldefs::NVSList_T additionalInfo;
+   };
+   
+  /**
+   * <p>In order to allow the NMS to deal with a large number of objects,
+   * iterators are used.</p>
+   **/
+   interface FDFrIterator_I
+   {
+      boolean next_n(in  unsigned long    how_many,
+                     out FlowDomainFragmentList_T fdfrList)
+        raises (globaldefs::ProcessingFailureException);
+
+      unsigned long getLength()
+        raises (globaldefs::ProcessingFailureException);
+
+      void destroy()
+        raises (globaldefs::ProcessingFailureException);
+   };
+
+  /**
+   * MFDFrIterator_I
+   **/	
+     interface MFDFrIterator_I 
+   {
+      boolean next_n(in  unsigned long    how_many,
+                     out MatrixFlowDomainFragmentList_T mfdfrList)
+        raises (globaldefs::ProcessingFailureException);
+
+      unsigned long getLength()
+        raises (globaldefs::ProcessingFailureException);
+
+      void destroy()
+        raises (globaldefs::ProcessingFailureException);
+   };
+
+
+  /**
+   * RouteConstraint_T
+   **/	
+   struct RouteConstraint_T
+   {
+     string  ipAddress;
+     string  routingStytle;
+     globaldefs::NVSList_T additionalInfo;
+   };
+
+
+  /**
+   * <p>Sequence of RouteConstraint_T objects.</p>
+   **/
+  typedef sequence<RouteConstraint_T> RouteConstraintList_T;
+  
+  
+  /**
+   * IPCrossConnection_T
+   **/	
+   struct IPCrossConnection_T
+   {
+   globaldefs::NamingAttributes_T name;
+   string nativeEMSName;
+   string userLabel;
+   subnetworkConnection::SNCState_T activeState;
+   performance::AdministrativeState_T  administrativeState;
+   globaldefs::ConnectionDirection_T direction; 
+   subnetworkConnection::SNCType_T ccType;
+   transmissionParameters::LayeredParameters_T transmissionParams;
+   subnetworkConnection::TPDataList_T aEndList;    
+   subnetworkConnection::TPDataList_T zEndList; 
+   globaldefs::NVSList_T additionalInfo;
+  };
+	
+  /**
+   * <p>Sequence of IPCrossConnection_T objects.</p>
+   **/
+  typedef sequence<IPCrossConnection_T> IPCrossConnectionList_T;
+
+  /**
+   * <p>IPCrossConnectionIterator_I</p>
+   **/
+     interface IPCrossConnectionIterator_I 
+   {
+      boolean next_n(in  unsigned long    how_many,
+                     out IPCrossConnectionList_T ipCCList)
+        raises (globaldefs::ProcessingFailureException);
+
+      unsigned long getLength()
+        raises (globaldefs::ProcessingFailureException);
+
+      void destroy()
+        raises (globaldefs::ProcessingFailureException);
+   };
+
+  
+  /**
+   * TrafficTrunk_T
+   **/	
+  struct TrafficTrunk_T
+   {   
+   globaldefs::NamingAttributes_T name;
+   string userLabel;
+   string nativeEMSName;
+   string owner;
+   subnetworkConnection::SNCState_T activeState; 
+   globaldefs::ConnectionDirection_T direction;
+   transmissionParameters::LayeredParameters_T transmissionParams;
+   subnetworkConnection::TPDataList_T aEnd;    
+   subnetworkConnection::TPDataList_T zEnd; 
+   performance::AdministrativeState_T administrativeState;
+   subnetworkConnection::Reroute_T rerouteAllowed;
+   subnetworkConnection::NetworkRouted_T networkRouted;
+   globaldefs::NVSList_T additionalInfo;  
+   };
+   
+  /**
+   * <p>Sequence of TrafficTrunk_T objects.</p>
+   **/
+  typedef sequence<TrafficTrunk_T> TrafficTrunkList_T;
+  
+  /**
+   * <p>TrafficTrunkIterator_I </p>
+   **/
+     interface TrafficTrunkIterator_I 
+   {
+      boolean next_n(in  unsigned long    how_many,
+                     out TrafficTrunkList_T trafficTrunkList)
+        raises (globaldefs::ProcessingFailureException);
+
+      unsigned long getLength()
+        raises (globaldefs::ProcessingFailureException);
+
+      void destroy()
+        raises (globaldefs::ProcessingFailureException);
+   };
+   
+  /**
+   * <p>TrafficTrunkCreateData_T </p>
+   **/
+   struct TrafficTrunkCreateData_T
+   {
+    string userLabel;
+    boolean forceUniqueness;
+    string owner;
+    globaldefs::ConnectionDirection_T direction;
+    subnetworkConnection::Reroute_T rerouteAllowed;
+    subnetworkConnection::NetworkRouted_T networkRouted;
+    transmissionParameters::LayeredParameters_T transmissionParams;
+    boolean fullRoute;
+	subnetworkConnection::ResourceList_T neTpInclusions;
+	subnetworkConnection::ResourceList_T neTpSncExclusions;
+    subnetworkConnection::TPDataList_T aEnd;    
+    subnetworkConnection::TPDataList_T zEnd; 
+    IPCrossConnectionList_T ipCCInclusions;
+    globaldefs::NVSList_T additionalCreationInfo;
+   };
+
+  /**
+   * <p>TrafficTrunkModifyData_T </p>
+   **/
+   struct TrafficTrunkModifyData_T
+   {
+    string userLabel;
+    boolean forceUniqueness;
+    string owner;
+    globaldefs::ConnectionDirection_T direction;
+    subnetworkConnection::Reroute_T rerouteAllowed;
+    subnetworkConnection::NetworkRouted_T networkRouted;
+    transmissionParameters::LayeredParameters_T transmissionParams;
+    IPCrossConnectionList_T addedOrNewRoute;
+    IPCrossConnectionList_T removedRoute;
+    subnetworkConnection::ResourceList_T neTpInclusions;
+    boolean fullRoute;
+    subnetworkConnection::ResourceList_T neTpSncExclusions;
+    subnetworkConnection::TPDataList_T aEnd;    
+    subnetworkConnection::TPDataList_T zEnd; 
+    globaldefs::NVSList_T additionalInfo;
+   };
+
+   /**
+   * <p>MFDFrModifyData_T </p>
+   **/
+   struct  MFDFrModifyData_T
+   {
+	   string modifyType;
+	   string userLabel;
+	   boolean forceUniqueness;
+	   string owner;
+	   MultipointServiceAttr_T multipointServiceAttr;
+	   transmissionParameters::LayeredParameters_T transmissionParams;
+	   subnetworkConnection::TPDataList_T aEnd;
+	   subnetworkConnection::TPDataList_T zEnd;
+	   globaldefs::NVSList_T additionalInfo;
+   };
+   
+  /**
+   * <p>IPRouteInfo_T </p>
+   **/
+   struct  IPRouteInfo_T
+   {
+       globaldefs::NamingAttributes_T trafficTrunkName;
+	   IPCrossConnectionList_T route;
+   };
+   
+  /**
+   * <p>IPRouteInfoList_T </p>
+   **/   
+   typedef sequence< IPRouteInfo_T > IPRouteInfoList_T;
+   
+  /**
+   * <p>FDFrRouteInfo_T </p>
+   **/
+   struct  FDFrRouteInfo_T
+   {
+       globaldefs::NamingAttributes_T fdfrName;
+	   FDFrRoute_T route;
+   };
+   
+  /**
+   * <p>FDFrRouteInfoList_T </p>
+   **/
+   typedef sequence< FDFrRouteInfo_T > FDFrRouteInfoList_T;
+    
+	interface HW_VPNMgr_I  : common::Common_I
+	{
+	/**
+	 *createMFDFr
+	 **/
+	 void createMFDFr(
+	 	in MatrixFlowDomainFragment_T createData, 
+    	inout subnetworkConnection::TPDataList_T tpsToModify, 
+    	out MatrixFlowDomainFragment_T theMFDFr, 
+    	out globaldefs::NamingAttributesList_T notConnectableCPTPList, 
+    	out globaldefs::NamingAttributesList_T parameterProblemsTPList, 
+    	out string errorReason) 
+    	raises (globaldefs::ProcessingFailureException);
+    	
+	/**
+	 *modifyMFDFr
+	 *
+	 **/
+	 void modifyMFDFr (in globaldefs::NamingAttributes_T mfdfrName, 
+		 in MFDFrModifyData_T modifyData,
+		 out MatrixFlowDomainFragment_T theMFDFr, 
+		 out globaldefs::NamingAttributesList_T notConnectableCPTPList, 
+		 out globaldefs::NamingAttributesList_T parameterProblemsTPList, 
+		 out string errorReason) 
+		 raises (globaldefs::ProcessingFailureException);
+
+	/**
+	 *deleteMFDFr
+	 **/
+	 void deleteMFDFr(
+		in globaldefs::NamingAttributes_T mfdfrName) 
+		raises (globaldefs::ProcessingFailureException); 
+ 
+	/**
+	 *activateMFDFr
+	 **/ 
+     void activateMFDFr(
+     	in globaldefs::NamingAttributes_T mfdfrName,
+    	inout subnetworkConnection::TPDataList_T tpsToModify, 
+    	out MatrixFlowDomainFragment_T theMFDFr,
+    	out string errorReason)
+    	raises (globaldefs::ProcessingFailureException);
+    	   	
+	/**
+	 *deactivateMFDFr
+	 **/
+     void deactivateMFDFr(
+     	in globaldefs::NamingAttributes_T mfdfrName,
+    	inout subnetworkConnection::TPDataList_T tpsToModify, 
+    	out MatrixFlowDomainFragment_T theMFDFr,
+    	out string errorReason) 
+    	raises (globaldefs::ProcessingFailureException);
+    	
+	/**
+	 *getAllMFDFrs
+	 **/    	
+    	
+     void getAllMFDFrs(
+    	in globaldefs::NamingAttributes_T meName,
+    	in transmissionParameters::LayerRateList_T connectionRateList, 
+    	in unsigned long how_many,
+    	out MatrixFlowDomainFragmentList_T mfdfrList,
+    	out MFDFrIterator_I mfdfrIt) 
+    	raises (globaldefs::ProcessingFailureException);
+    	
+	/**
+	 *getAllMFDFrNames
+	 **/
+     void getAllMFDFrNames(
+     	in globaldefs::NamingAttributes_T meName,
+    	in transmissionParameters::LayerRateList_T connectionRateList, 
+    	in unsigned long how_many,
+    	out globaldefs::NamingAttributesList_T nameList,
+    	out globaldefs::NamingAttributesIterator_I nameIt) 
+    	raises (globaldefs::ProcessingFailureException);
+
+	/**
+	 *getMFDFr
+	 **/    	
+     void getMFDFr(
+     	in globaldefs::NamingAttributes_T mfdfrName,
+    	out MatrixFlowDomainFragment_T theMFDFr)
+    	raises (globaldefs::ProcessingFailureException);
+    	
+	/**
+	 *getAllTrafficTrunksWithME
+	 **/   	
+     void getAllTrafficTrunksWithME(
+         in globaldefs::NamingAttributes_T managedElementName,
+         in transmissionParameters::LayerRateList_T connectionRateList,
+         in unsigned long how_many,
+         out TrafficTrunkList_T trafficTrunkList,
+         out TrafficTrunkIterator_I trafficTrunkIt)
+         raises(globaldefs::ProcessingFailureException);
+         
+	/**
+	 *getAllTrafficTrunkNamesWithME
+	 **/   	
+     void getAllTrafficTrunkNamesWithME(
+         in globaldefs::NamingAttributes_T managedElementName,
+         in transmissionParameters::LayerRateList_T connectionRateList,
+         in unsigned long how_many,
+         out globaldefs::NamingAttributesList_T nameList,
+         out globaldefs::NamingAttributesIterator_I nameIt)
+         raises(globaldefs::ProcessingFailureException);
+                  
+    	    	
+	/**
+	 *createTrafficTrunk
+	 **/   	   	
+     void createTrafficTrunk(
+		in TrafficTrunkCreateData_T createData,
+		out TrafficTrunk_T theTrafficTrunk , 
+		out string errorReason)
+		raises(globaldefs::ProcessingFailureException);  	
+    	
+	/**
+	 *deleteTrafficTrunk
+	 **/       	
+    void deleteTrafficTrunk(
+		in globaldefs::NamingAttributes_T trafficTrunkName)
+  		raises(globaldefs::ProcessingFailureException);  	
+
+	/**
+	 *activateTrafficTrunk
+	 **/     
+	 void activateTrafficTrunk(
+		in globaldefs::NamingAttributes_T trafficTrunkName,
+		out TrafficTrunk_T theTrafficTrunk,
+		out string errorReason)
+     	raises (globaldefs::ProcessingFailureException);
+
+	/**
+	 *deactivateTrafficTrunk
+	 **/   
+	 void deactivateTrafficTrunk(
+		in globaldefs::NamingAttributes_T trafficTrunkName,
+		out TrafficTrunk_T theTrafficTrunk,
+		out string errorReason)
+		raises (globaldefs::ProcessingFailureException);
+ 
+	/**
+	 *getTrafficTrunk
+	 **/
+	 void getTrafficTrunk(
+         in globaldefs::NamingAttributes_T trafficTrunkName,
+         out TrafficTrunk_T trafficTrunk)
+         raises(globaldefs::ProcessingFailureException); 
+ 
+	/**
+	 *modifyTrafficTrunk
+	 **/
+ 	 void modifyTrafficTrunk(
+         in globaldefs::NamingAttributes_T trafficTrunkName,
+         in TrafficTrunkModifyData_T modifyData,
+         out TrafficTrunk_T newTrafficTrunk,
+         out string errorReason)
+         raises(globaldefs::ProcessingFailureException);
+ 
+	/**
+	 *getAllIPCrossConnections
+	 **/ 
+	 void getAllIPCrossConnections(
+		in globaldefs::NamingAttributes_T managedElementName,
+		in transmissionParameters::LayerRateList_T connectionRateList,
+		in unsigned long how_many,
+		out IPCrossConnectionList_T ipCCList,
+		out IPCrossConnectionIterator_I ipCCIt)
+         raises(globaldefs::ProcessingFailureException); 
+         
+   /**
+	 *getAllIPCrossConnectionNames
+	 **/ 
+	 void getAllIPCrossConnectionNames(
+         in globaldefs::NamingAttributes_T managedElementName,
+         in transmissionParameters::LayerRateList_T connectionRateList,
+         in unsigned long how_many,
+         out globaldefs::NamingAttributesList_T nameList,
+         out globaldefs::NamingAttributesIterator_I nameIt)
+         raises(globaldefs::ProcessingFailureException);
+ 
+	/**
+	
+	 *createIPCrossConnections
+	 **/  
+	 void createIPCrossConnections(
+		in IPCrossConnectionList_T ipCCList,
+		out IPCrossConnectionList_T successedIPCCList, 
+		out IPCrossConnectionList_T failedIPCCList )
+		raises(globaldefs::ProcessingFailureException); 
+
+ 	/**
+	 *deleteIPCrossConnections
+	 **/
+	 void deleteIPCrossConnections(
+		in globaldefs::NamingAttributesList_T ipCCNameList, 
+		out globaldefs::NamingAttributesList_T successedIPCCNameList, 
+		out globaldefs::NamingAttributesList_T failedIPCCNameList )
+		raises(globaldefs::ProcessingFailureException);  
+ 
+ 	/**
+	 *getIPCrossConnection
+	 **/ 
+	 void getIPCrossConnection(
+		in globaldefs::NamingAttributes_T ipCCName,
+		out IPCrossConnection_T ipCC)
+		raises(globaldefs::ProcessingFailureException); 
+ 
+ 	/**
+	 *modifyIPCrossConnection
+	 **/ 
+	 void modifyIPCrossConnection(
+		in globaldefs::NamingAttributes_T ipCCName,
+		in  transmissionParameters::LayeredParameters_T transmissionParams,
+		out IPCrossConnection_T newIPCC,
+		out string errorReason)
+		raises(globaldefs::ProcessingFailureException); 
+ 
+ 	/**
+	 *activateIPCrossConnections
+	 **/  
+	 void activateIPCrossConnections(
+		in globaldefs::NamingAttributesList_T ipCCNameList,
+		out globaldefs::NamingAttributesList_T successedIPCCNameList, 
+		out globaldefs::NamingAttributesList_T failedIPCCNameList,
+		out string errorReason)
+		raises (globaldefs::ProcessingFailureException);
+ 
+ 	/**
+	 *deactivateIPCrossConnections
+	 **/
+	 void deactivateIPCrossConnections(
+		in globaldefs::NamingAttributesList_T ipCCNameList,
+		out globaldefs::NamingAttributesList_T successedIPCCNameList, 
+		out globaldefs::NamingAttributesList_T failedIPCCNameList,
+		out string errorReason)
+		raises (globaldefs::ProcessingFailureException);
+		
+ 	/**
+	 *createFDFr
+	 **/		
+         void createFDFr(
+		in FDFrCreateData_T createData,
+		in flowDomain::ConnectivityRequirement_T connectivityRequirement,
+		inout subnetworkConnection::TPDataList_T endTPs,
+		inout subnetworkConnection::TPDataList_T internalTPs,
+		inout MatrixFlowDomainFragmentList_T mfdfrs,
+		inout subnetworkConnection::TPDataList_T tpsToModify,
+		out FlowDomainFragment_T theFDFr, 
+		out string errorReason)
+		raises (globaldefs::ProcessingFailureException);
+
+ 	/**
+	 *modifyFDFr
+	 **/        
+         void modifyFDFr(
+		in globaldefs::NamingAttributes_T fdfrName,
+		in FDFrModifyData_T fdfrModifyData,
+		inout subnetworkConnection::TPDataList_T tpsToModify,
+		in subnetworkConnection::GradesOfImpact_T  tolerableImpact,
+		out FlowDomainFragment_T newFDFr,
+		out string errorReason)
+		raises (globaldefs::ProcessingFailureException);
+
+ 	/**
+	 *deleteFDFr
+	 **/
+         void deleteFDFr(
+		in globaldefs::NamingAttributes_T fdfrName,
+		inout subnetworkConnection::TPDataList_T tpsToModify)
+		raises (globaldefs::ProcessingFailureException);
+
+ 	/**
+	 *activateFDFr
+	 **/        
+         void activateFDFr(
+		in globaldefs::NamingAttributes_T fdfrName,
+		out FlowDomainFragment_T fdfr)
+		raises (globaldefs::ProcessingFailureException);
+
+ 	/**
+	 *deactivateFDFr
+	 **/    
+         void deactivateFDFr(
+		in globaldefs::NamingAttributes_T fdfrName,
+		out FlowDomainFragment_T fdfr)
+		raises (globaldefs::ProcessingFailureException);		
+    	
+ 	/**
+	 *getTrafficTrunkRoute
+	 **/
+     void getTrafficTrunkRoute(
+         in globaldefs::NamingAttributes_T trafficTrunkName,
+         out IPCrossConnectionList_T route)
+         raises (globaldefs::ProcessingFailureException);
+
+    /**
+     *getAllFDFrs
+     **/    
+    void getAllFDFrs(
+        in globaldefs::NamingAttributes_T fdName,
+        in unsigned long how_many,
+        in transmissionParameters::LayerRateList_T connectionRateList, 
+        out FlowDomainFragmentList_T fdfrList,
+        out FDFrIterator_I fdfrIt)
+        raises (globaldefs::ProcessingFailureException);
+
+     /**
+     *getAllFDFrNames
+     **/   
+        void getAllFDFrNames(
+        in globaldefs::NamingAttributes_T fdName,
+        in unsigned long how_many,
+        in transmissionParameters::LayerRateList_T connectionRateList, 
+        out globaldefs::NamingAttributesList_T nameList,
+        out globaldefs::NamingAttributesIterator_I nameIt)
+        raises (globaldefs::ProcessingFailureException);
+
+    /**
+     *getFDFr
+     **/          
+        void getFDFr(
+        in globaldefs::NamingAttributes_T fdfrName,
+        out FlowDomainFragment_T theFDFr)
+        raises (globaldefs::ProcessingFailureException);
+  
+     /**
+     *getFDFrRoute
+     **/
+        void getFDFrRoute(
+        in globaldefs::NamingAttributes_T  fdfrName,  
+        in boolean includeHigherOrderCCs,
+        out FDFrRoute_T  route)
+        raises (globaldefs::ProcessingFailureException);
+
+     /**
+     *getFDFrServerTrail
+     **/
+        void getFDFrServerTrail (
+        in globaldefs::NamingAttributes_T fdfrName,
+        out globaldefs::NamingAttributesList_T serverNameList)
+        raises (globaldefs::ProcessingFailureException);
+
+     /**
+     *getAllTrafficTrunks
+     **/        
+       void getAllTrafficTrunks(
+        in globaldefs::NamingAttributes_T fdName,
+        in transmissionParameters::LayerRateList_T connectionRateList,
+        in unsigned long how_many,
+        out TrafficTrunkList_T trafficTrunkList,
+        out TrafficTrunkIterator_I trafficTrunkIt)
+        raises(globaldefs::ProcessingFailureException);
+        
+    /**
+     *getAllTrafficTrunkNames
+     **/       
+     void getAllTrafficTrunkNames(
+         in globaldefs::NamingAttributes_T fdName,
+         in transmissionParameters::LayerRateList_T connectionRateList,
+         in unsigned long how_many,
+         out globaldefs::NamingAttributesList_T nameList,
+         out globaldefs::NamingAttributesIterator_I nameIt)
+         raises(globaldefs::ProcessingFailureException);
+
+     /**
+     *getIPRoutes
+     **/         
+       void getIPRoutes(
+        in globaldefs::NamingAttributes_T trafficTrunkName,
+        out IPCrossConnectionList_T routes)
+        raises(globaldefs::ProcessingFailureException);
+
+ /**
+     *getTrafficTrunksByNativeEmsName
+     **/ 
+    void getTrafficTrunksByNativeEmsName(
+        in string nativeEmsName,
+        out TrafficTrunkList_T trafficTrunkList)
+        raises(globaldefs::ProcessingFailureException); 
+
+     /**
+     *getTrafficTrunksByUserLabel
+     **/        
+       void getTrafficTrunksByUserLabel(
+        in string userLabel,
+        out TrafficTrunkList_T trafficTrunkList)
+        raises(globaldefs::ProcessingFailureException);
+
+     /**
+     *getTrafficTrunksWithTP
+     **/        
+       void getTrafficTrunksWithTP(
+        in globaldefs::NamingAttributes_T tpName,
+        in unsigned long how_many,
+        out TrafficTrunkList_T trafficTrunkList,
+        out TrafficTrunkIterator_I trafficTrunkIt)
+        raises(globaldefs::ProcessingFailureException);
+
+     /**
+     *getFDFrsByUserLabel
+     **/        
+       void getFDFrsByUserLabel(
+        in string userLabel,
+        out FlowDomainFragmentList_T fdfrList)
+        raises(globaldefs::ProcessingFailureException);
+
+     /**
+     *getFDFrsWithME
+     **/        
+       void getFDFrsWithME(
+        in globaldefs::NamingAttributes_T managedElementName,
+        in transmissionParameters::LayerRateList_T connectionRateList,
+        in unsigned long how_many,
+        out FlowDomainFragmentList_T fdfrList,
+        out FDFrIterator_I fdfrIt)
+        raises(globaldefs::ProcessingFailureException);
+
+     /**
+     *getFDFrsWithTP
+     **/        
+       void getFDFrsWithTP(
+        in globaldefs::NamingAttributes_T cptpName,
+        in unsigned long how_many,
+        out FlowDomainFragmentList_T fdfrList,
+        out FDFrIterator_I fdfrIt)
+        raises(globaldefs::ProcessingFailureException);		
+
+    /**
+	  * getSelfLearningMACAddressTable
+	  **/
+      void getSelfLearningMACAddressTable(
+        in globaldefs::NamingAttributesList_T nameList,
+        in unsigned long how_many,
+        out SelfLearningMACAddressTableList_T tableList,
+        out SelfLearningMACAddressTableIterator_I tableIt
+      )
+      raises (globaldefs::ProcessingFailureException);
+
+	/**
+	  * getIPRoutesByTrafficTrunks 
+	  **/
+      void getIPRoutesByTrafficTrunks (
+        in globaldefs::NamingAttributesList_T trafficTrunkNameList,
+		out IPRouteInfoList_T  routeInfoList
+      )
+      raises (globaldefs::ProcessingFailureException);
+	
+	/**
+	  * getFDFrRoutes 
+	  **/
+	  void getFDFrRoutes (
+        in globaldefs::NamingAttributesList_T fdfrNameList,
+        out FDFrRouteInfoList_T  routeInfoList
+	 )
+     raises(globaldefs::ProcessingFailureException);
+        
+    };   
+};
+
+#endif

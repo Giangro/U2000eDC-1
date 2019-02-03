@@ -1,0 +1,667 @@
+#ifndef         trailNtwProtection_idl
+#define         trailNtwProtection_idl
+
+// *************************************
+// *                                   *
+// * trailNtwProtection.idl            *
+// *                                   *
+// *************************************
+
+//Include list
+#include "globaldefs.idl"
+#include "transmissionParameters.idl"
+#include "common.idl"
+#include "protection.idl"
+
+
+#pragma prefix "mtnm.tmforum.org"
+
+  /** 
+   * <a href=../../../supportingDocumentation/SD1-27_Overview_NML-EML_Interface.pdf >SD1-27 Overview of 
+   * NML-EML interface</a>
+   *
+   * <p>This module contains the definition of the Trail Network Protection (TNP) 
+   * structure of the NML-EML interface.
+   * It also contains the definition of the Trail Network Protection
+   * manager.</p>
+   *
+   * <h5> Version X.Y. </h5>
+   **/
+
+module trailNtwProtection
+{
+
+  /**
+   * <p>The struct TrailNtwProtection_T represents a Trail Network Protection
+   * (TNP) object, which is used to model the network view of linear trail 
+   * protection schemes.</p>
+   *
+   * globaldefs::NamingAttributes_T <b>name</b>:
+   * <br>The name represents the name of the Trail Network Protection (TNP) 
+   * which is assigned by the target OS upon creation.
+   * The target OS is responsible for guaranteeing the uniqueness of the name
+   * within the target OS context.<br>
+   *
+   * string <b>userLabel</b>:
+   * <br>The userLabel is provisionable by the requesting OS. This attribute can 
+   * be set by the requesting OS through the Common_I interface service
+   * common::Common_I::setUserLabel().<br>
+   *
+   * string <b>nativeEMSName</b>:
+   * <br>The nativeEMSName represents how the TNP is referred to on
+   * EMS/target OS displays.  Its aim is to provide a 
+   * "nomenclature bridge" to aid relating information presented on requesting 
+   * OS displays to EMS/target OS displays (via GUI cut through). If supported 
+   * by the EMS/target OS, this attribute can be set by the requesting OS
+   * through the Common_I interface service
+   * common::Common_I::setNativeEMSName().<br>
+   *
+   * string <b>owner</b>:
+   * <br>The owner is provisionable by the requesting OS.  This attribute
+   * can be set by the requesting OS through the Common_I interface service
+   * common::Common_I::setOwner().<br>
+   *
+   * protection::ProtectionGroupType_T <b>protectionGroupType</b>:
+   * <br>Defines the type of protection scheme. 
+   * Applicable types are 1+1, 1:N.<br>
+   *
+   * protection::ProtectionSchemeState_T <b>protectionSchemeState</b>:
+   * <br>Identifies the current protection scheme state.<br>
+   *
+   * protection::ReversionMode_T <b>reversionMode</b>:
+   * <br>Defines whether the protection scheme is revertive or not.<br>
+   *
+   * transmissionParameters::LayerRate_T <b>rate</b>:
+   * <br>The rate where protection scheme applies.<br>
+   *
+   * string <b> trailNtwProtectionType </b>:
+   * <br> Closed: when both PGs, PG A and PG Z, are inside the target OS domain.
+   * Open: otherwise. When the type is Open, the PG within the target OS domain
+   * is designated as PG A and the one outside of the target OS domain is 
+   * designated as PG Z.<br>
+   *
+   * globaldefs::NamingAttributes_T <b>protectionGroupAName</b>:
+   * <br>The name represents the name of the Protection Group A
+   * object involved in the Trail Network Protection.<br>
+   *
+   * globaldefs::NamingAttributes_T <b>protectionGroupZName</b>:
+   * <br>The name represents the name of the Protection Group Z
+   * object involved in the Trail Network Protection.
+   * This attribute is empty if the trail network protection type is open,
+   * i.e. the PG with Z role is outside target OS domain.<br>
+   *
+   * globaldefs::NamingAttributesList_T <b>pgATPList</b>:
+   * <br>This is the list of TPs that belong in the protection group A.
+   * The list of TPs is partially ordered. The protecting TP always
+   * trails its worker TPs. <br>
+   *
+   * globaldefs::NamingAttributesList_T <b>pgZTPList</b>:
+   * <br>This is the list of TPs that belong in the protection group Z.
+   * The list of TPs is partially ordered. The protecting TP always
+   * trails its worker TPs.
+   * This attribute is empty if the trail network protection type is open,
+   * i.e. the PG with Z role is outside the target OS domain. <br>
+   *
+   * globaldefs::NamingAttributesMultipleList_T <b>workerTrailList</b>:
+   * <br> This attribute shall represent a list of the Subnetwork Connection
+   * object names involved in the Trail Network Protection scheme, with worker
+   * role. This attribute is a list of lists, allowing to specify a sequence of
+   * consecutive SNCs in case different MLSNs are crossed by the same worker
+   * trail.
+   * This attribute is empty if trail protection is e.g. at Section rate,
+   * i.e. a rate which does not foresee the modeling of connectivity
+   * by the SNC object.<br> 
+   *
+   * globaldefs::NamingAttributesList_T <b>protectionTrail</b>:
+   * <br> This attribute shall represent the Subnetwork Connection object name
+   * involved in the Trail Network Protection scheme, with protection role.
+   * This attribute is a list, allowing to specify a sequence of consecutive
+   * SNCs in case different MLSNs are crossed by the protection trail.
+   * This attribute is empty if trail protection is e.g. at Section rate,
+   * i.e. a rate which does not foresee the modeling of connectivity
+   * by the SNC object.<br>
+   *
+   * globaldefs::NVSList_T <b>tnpParameters</b>:
+   * <br>The tnpParameters contains a list of name value pairs for the
+   * PG parameters of the Trail Network Protection.
+   * See <a href=../../../supportingDocumentation/SD1-29_PGPParameters.pdf >SD1-29 PGP Parameters</a>
+   * for details, considering the parameters which are 
+   * applicable to linear trail protection PG types.<br>
+   *
+   * string <b>apsFunction</b>:
+   * <br> This attribute shall indicate the type of APS protocol supported by
+   * the switching function of PGs, e.g. "G.783", "Legacy", "T-MPLS".<br>
+   *
+   * string <b>networkAccessDomain</b>:
+   * <br> This attribute shall represent the Network Access Domain to which this
+   * TNP has been assigned.<br>
+   *
+   * globaldefs::NVSList_T <b>additionalInfo</b>:
+   * <br>This attribute allows the communication from the target OS to the 
+   * requesting OS of additional information which is not explicitly modelled.
+   * See <a href=../../../supportingDocumentation/SD1-1_additionalInfoUsage.pdf >SD1-1 
+   * Additional Info Usage</a> for further information on usage. This 
+   * may be an empty list.<br>
+   **/
+   struct TrailNtwProtection_T
+   {
+    globaldefs::NamingAttributes_T name;
+    string userLabel;
+    string nativeEMSName;
+    string owner;
+    protection::ProtectionGroupType_T protectionGroupType;
+    protection::ProtectionSchemeState_T protectionSchemeState;
+    protection::ReversionMode_T reversionMode;
+    transmissionParameters::LayerRate_T rate;
+    string trailNtwProtectionType;
+    globaldefs::NamingAttributes_T protectionGroupAName;
+    globaldefs::NamingAttributes_T protectionGroupZName;
+    globaldefs::NamingAttributesList_T pgATPList;
+    globaldefs::NamingAttributesList_T pgZTPList;
+    globaldefs::NamingAttributesMultipleList_T workerTrailList;
+    globaldefs::NamingAttributesList_T protectionTrail;
+    globaldefs::NVSList_T tnpParameters;
+    string apsFunction; 
+    string networkAccessDomain;
+    globaldefs::NVSList_T additionalInfo;
+   };
+
+
+  /**
+   * <p>Sequence of TrailNtwProtection_T.</p>
+   **/
+   typedef sequence < TrailNtwProtection_T > TrailNtwProtectionList_T;
+
+
+  /**
+   * <p> The Trail Network Protection attributes which can be modified
+   * on the target OS are defined in the TrailNtwProtModifyData_T structure.</p>
+   *
+   * string <b>userLabel</b>:
+   * <br>The userLabel is provisionable by the requesting OS. This attribute can 
+   * also be set by the requesting OS through the Common_I interface service
+   * common::Common_I::setUserLabel(). It may be empty.<br>
+   *
+   * ean <b>forceUniqueness</b>:
+   * <br>Specifies whether uniqueness of the userLabel is required amongst
+   * TNPs of the target OS. The operation will fail if userLabel is already
+   * ibooln use and forceUniqueness is true.<br>
+   *
+   * string <b>nativeEMSName</b>:
+   * <br>The nativeEMSName represents how the TNP is referred to on the
+   * EMS/target OS displays. Its aim is to provide a 
+   * "nomenclature bridge" to aid relating information presented on the 
+   * requesting OS displays to the EMS/target OS displays (via GUI cut through). 
+   * If supported by the EMS/target OS, this attribute can be set by the 
+   * requesting OS through the Common_I interface service
+   * common::Common_I::setNativeEMSName().<br>
+   *
+   * string <b>owner</b>
+   * <br>The owner is provisionable by the requesting OS. This attribute can
+   * also be set by requesting OS through the Common_I interface service
+   * common::Common_I::setOwner(). It may be empty.<br>
+   *
+   * protection::ProtectionGroupType_T <b>protectionGroupType</b>:
+   * <br>Defines the type of protection scheme. Applicable types are 1+1, 1:N.
+   *
+   * protection::ReversionMode_T <b>reversionMode</b>:
+   * <br>Defines whether the protection scheme is revertive or not.
+   *
+   * globaldefs::NamingAttributesList_T <b>pgATPList</b>:
+   * <br> This attribute shall represent a list of the TP objects involved in
+   * the Trail Network Protection, on the side of PG A.
+   * The list of TPs is partially ordered. The protecting TP always
+   * trails its worker TPs. Note that TP objects with protection role cannot
+   * contain any CTP that is used by an SNC in any state.
+   *
+   * globaldefs::NamingAttributesList_T <b>pgZTPList</b>:
+   * <br> This attribute shall represent a list of the TP objects involved in
+   * the Trail Network Protection, on the side of PG Z.
+   * The list of TPs is partially ordered. The protecting TP always
+   * trails its worker TPs. Note that TP objects with protection role cannot
+   * contain any CTP that is used by an SNC in any state. This attribute shall 
+   * be left empty if trail protection scheme is open, i.e. the PG with Z role 
+   * is outside the target OS domain.
+   *
+   * globaldefs::NVSList_T <b>tnpParameters</b>:
+   * <br>The tnpParameters contains a list of name value pairs for the
+   * PG parameters of the Trail Network Protection.
+   * See <a href=../../../supportingDocumentation/SD1-29_PGPParameters.pdf >SD1-29 PGP Parameters</a>
+   * for details, considering the parameters which are applicable to
+   * linear trail protection PG types.<br>
+   *
+   * string <b>apsFunction</b>:
+   * <br> This attribute shall indicate the type of APS protocol supported by
+   * the switching function of PGs, e.g. "G.783", "Legacy", "T-MPLS".
+   *
+   * string <b>networkAccessDomain</b>:
+   * <br> This attribute shall represent the Network Access Domain to be
+   * assigned to the TNP.
+   *
+   * globaldefs::NVSList_T <b>additionalInfo</b>:
+   * <br>Some additional information may be specified by the requesting OS.
+   * This information may or may not become a part of the TNP object's
+   * additionalInfo attribute. The list may be empty.<br>
+   **/
+   struct TrailNtwProtModifyData_T {
+    string userLabel;
+    boolean forceUniqueness;
+    string nativeEMSName;
+    string owner;
+    protection::ProtectionGroupType_T protectionGroupType;
+    protection::ReversionMode_T reversionMode;
+    globaldefs::NamingAttributesList_T pgATPList;
+    globaldefs::NamingAttributesList_T pgZTPList;
+    globaldefs::NVSList_T tnpParameters;
+    string apsFunction; 
+    string networkAccessDomain;
+    globaldefs::NVSList_T additionalInfo;
+   };
+
+
+
+  /**
+   * <p>The attributes required for the creation of a Trail Network Protection
+   * (TNP) on the target OS are defined in a TrailNtwProtCreateData_T 
+   * structure which the requesting OS will pass to the target OS at TNP 
+   * creation time.</p>
+   *
+   * transmissionParameters::LayerRate_T <b>rate</b>:
+   * <br>The rate where protection scheme applies.
+   *
+   * string <b> trailNtwProtectionType </b>:
+   * <br> Closed: when both PGs, PG A and PG Z, are inside target OS domain.
+   * Open: Otherwise. When the type is Open, the PG within the target OS domain
+   * is designated as PG A and the one outside of the target OS domain is 
+   * designated as PG Z.
+   *
+   * globaldefs::NamingAttributes_T <b>protectionGroupAName</b>:
+   * <br> This attribute shall indicate the name of the PG that is to be created 
+   * or an already existing PG, which will assume PG A role of the TNP.
+   * In the case the PG already exists, the pgATPList can be left empty, 
+   * otherwise its value will overwrite existing PG A attribute value.
+   * This rule applies to all other modifiable attributes, which type allows 
+   * empty value, like tnpParameters, which are then provisioned to both
+   * PG A and PG Z (if any) existing objects.
+   * The empty value of protectionGroupAName indicates that the PG A instance
+   * has to be created.
+   * In this case, the pgATPList cannot be left empty, together with the other
+   * attributes applicable to the PGs.
+   *
+   * globaldefs::NamingAttributes_T <b>protectionGroupZName</b>:
+   * <br> This attribute shall indicate the name of the PG that is to be created 
+   * or an already existing PG, which will assume PG Z role of the TNP.
+   * In the case the PG already exists, the pgZTPList can be left empty, 
+   * otherwise its value will overwrite existing PG Z attribute value.
+   * This rule applies to other modifiable attributes, which type allows empty
+   * value, like tnpParameters, which are then provisioned to both PG A and PG Z
+   * (if any) existing objects.
+   * The empty value of protectionGroupZName indicates either that PG Z instance 
+   * has to be created, or that trail protection type is open, i.e. the PG with 
+   * Z role is outside of the target OS domain.
+   * In case the PG Z instance has to be created, the pgZTPList cannot be left
+   * empty, together with the other attributes applicable to the PGs. 
+   *
+   * TrailNtwProtModifyData_T <b>modifiableAttributes</b>:
+   * <br>This is the struct where all Trail Network Protection
+   * attributes are defined, i.e. all the attributes which can be modified
+   * by the requesting OS through modify TNP operation. <br>
+
+   **/
+   struct TrailNtwProtCreateData_T {
+    transmissionParameters::LayerRate_T rate;
+    string trailNtwProtectionType;
+    globaldefs::NamingAttributesMultipleList_T workerTrailList;
+    globaldefs::NamingAttributesList_T protectionTrail;
+    globaldefs::NamingAttributes_T protectionGroupAName;
+    globaldefs::NamingAttributes_T protectionGroupZName;
+    TrailNtwProtModifyData_T modifiableAttributes;
+   };
+
+
+
+  /**
+   * <p>The trailNtwProtectionManager is used as a handle to gain access to the
+   * trail network protection functionalities of the NML-EML interface. </p>
+   *
+   * <p>A handle to an instance of this interface is gained via the
+   * emsSession::EmsSession_I::getManager() operation in Manager.</p>
+   **/
+
+
+  /**
+   * <p>In order to allow the requesting OS to deal with a large number of 
+   * objects, iterators are used.</p>
+   * 
+   * <p>See <a href=../../../supportingDocumentation/SD1-15_iterators.pdf >SD1-15 iterator
+   * overview</a> for information on how iterators are used in this
+   * interface.</p>
+   **/
+ interface TrailNtwProtectionIterator_I
+ {
+   boolean next_n(
+         in unsigned long how_many,
+         out TrailNtwProtectionList_T tnpList)
+        raises(globaldefs::ProcessingFailureException);
+		
+   unsigned long getLength()
+        raises(globaldefs::ProcessingFailureException);
+		
+   void destroy()
+        raises(globaldefs::ProcessingFailureException);
+ };
+
+
+  /**
+   * <p>The TrailNtwProtMgr_I is used to gain access to trail network protection
+   * schemes and their operations.</p>
+   **/
+
+
+ interface TrailNtwProtMgr_I : common::Common_I
+ {
+  /**
+   * <p>This operation is used by the client to discover all the 
+   * trail network protection schemes that are under the control of the
+   * TrailNtwProtMgr_I.</p>
+   *
+   * <br>globaldefs::NamingAttributes_T resourceName:
+   * The name of either a managed element (ME), or a Protection Group (PG),
+   * or a Subnetwork Connection (SNC) object.
+   * In case an ME name is given, then all the TNP objects are replied which 
+   * contain PGs (either PG A or PG Z) that belong to the addressed ME.
+   * In case a PG name is given, then the TNP object is replied, where the
+   * given PG has either PG A or PG Z role.
+   * In case an SNC name is given, then the TNP object is replied, where the
+   * given SNC is involved as either worker or protection trail.
+   * In case this parameter is left empty, then all TNPs in the target OS scope
+   * are replied.
+   *
+   * <br>unsigned long how_many: Maximum number of trail network protections 
+   * to report in the first batch.
+   * <br> TrailNtwProtectionList_T tnpList: First batch of trail network
+   *  protections.
+   * <br> TrailNtwProtectionIterator_I tnpIt: Iterator used to access the 
+   * remaining TNPs, if any.
+   * <br><b>Raises</b> globaldefs::ProcessingFailureException <br>
+   * EXCPT_NOT_IMPLEMENTED - Raised when this operation 
+   * is not supported by the target OS or the request with the 
+   * specified input parameters is not supported. <br>
+   * EXCPT_UNABLE_TO_COMPLY - Raised when the target OS cannot comply with the
+   * request, and cannot determine the reason it could not comply.<br>
+   * EXCPT_INTERNAL_ERROR - Raised in case of non-specific target OS internal 
+   *  failure.<br>
+   * EXCPT_INVALID_INPUT - Raised when resourceName does not reference a 
+   *  managed element (ME), or a Protection Group (PG), or a Subnetwork
+   *  Connection (SNC) object.<br>
+   * EXCPT_ENTITY_NOT_FOUND - Raised when resourceName references object which
+   *  does not exist.<br>
+   * EXCPT_NE_COMM_LOSS - Raised when communications to Managed Element is 
+   * lost and this prevents the operation completion. <br>
+   * EXCPT_TOO_MANY_OPEN_ITERATORS - Raised when maximum number of iterators 
+   *  that the target OS can support has been reached.<br>
+   * <br>
+   **/
+   void getAllTrailNtwProtections(
+         in globaldefs::NamingAttributes_T resourceName,
+         in unsigned long how_many,
+         out TrailNtwProtectionList_T tnpList,
+         out TrailNtwProtectionIterator_I tnpIt)
+        raises(globaldefs::ProcessingFailureException);
+
+
+  /**
+   * <p> This operation will return the Trail Network Protection (TNP)
+   *  structure for the TNP whose name is supplied as a parameter.</p>
+   *
+   * <br>globaldefs::NamingAttributes_T tnpName:
+   * The name of the Trail Network Protection (TNP) to retrieve.
+   * <br>TrailNtwProtection_T trailNtwProtection: The returned 
+   * Trail Network Protection.
+   * <br><b>Raises</b> globaldefs::ProcessingFailureException <br>
+   * EXCPT_NOT_IMPLEMENTED - Raised when this operation 
+   * is not supported by the target OS or the request with the 
+   * specified input parameters is not supported. <br>
+   * EXCPT_UNABLE_TO_COMPLY - Raised when the target OS cannot comply with the
+   * request, and cannot determine the reason it could not comply.<br>
+   * EXCPT_INTERNAL_ERROR - Raised in case of non-specific target OS internal 
+   *  failure.<br>
+   * EXCPT_INVALID_INPUT - Raised when tnpName does not reference a
+   *  Trail Network Protection.<br>
+   * EXCPT_ENTITY_NOT_FOUND - Raised when tnpName references a TNP object that 
+   *  does not exist.<br>
+   * EXCPT_NE_COMM_LOSS - Raised when communications to Managed Element is 
+   * lost and this prevents the operation completion. <br>
+   * <br>
+   **/
+   void getTrailNtwProtection(
+         in  globaldefs::NamingAttributes_T tnpName,
+         out TrailNtwProtection_T trailNtwProtection)
+        raises (globaldefs::ProcessingFailureException);
+
+
+  /**
+   * <p> This operation allows the requesting OS to request from the target OS
+   * the creation of a Trail Network Protection given
+   * the parameters passed in the operation.
+   * Two scenarios are foreseen:
+   * 1) Protection Groups are newly created as a result of the TNP creation
+   * 2) Existing Protection Groups become part of the TNP scheme.
+   *    In this scenario, it is possible to overwrite the current values of the 
+   *    existing PG attributes.
+   * If pgZTPList is not empty, the cardinality of the specified pgATPList and
+   * pgZTPList should be the same.
+   * The cardinality of the specified pgATPList (and pgZTPList, if pgZTPList is
+   * not empty) should be greater 
+   * than 0 and must not exceed the protection group type specific maximum 
+   * number of TP members; e.g. with 1+1 type maximum of two TPs can be included
+   * in the pgATPList / pgZTPList.</p>
+   *
+   * <br> TrailNtwProtCreateData_T tnpCreateData: Structure describing 
+   * the Trail Network Protection to be created.
+   *
+   * <br> TrailNtwProtection_T theTNP: The resulting Trail Network 
+   * Protection object. 
+   *
+   * <br> string errorReason: Specifies the operation error(s) if any.
+   *   
+   * <br><b>Raises</b> globaldefs::ProcessingFailureException <br>
+   * EXCPT_NOT_IMPLEMENTED - Raised when the Trail Network Protection creation 
+   * operation is not supported by the target OS or the request with the 
+   * specified input parameters is not supported. <br>
+   * EXCPT_INTERNAL_ERROR - Raised in case of non-specific target OS internal 
+   * failure. <br>
+   * EXCPT_INVALID_INPUT - Raised when any input parameter is 
+   * syntactically incorrect (e.g. a field of tnpCreateData is invalid 
+   * including any field in pgATPList, pgZTPList).
+   * This exception is raised also when 
+   * parameters are syntactically correct but pgA/ZTPList is empty or 
+   * pgpA/ZTPList cardinality in the tnpCreateData exceeds the maximum 
+   * number of TP members allowed for the specified protection group type. 
+   * This exception is raised also when pgZTPList is not empty and 
+   * the cardinality of pgATPList and pgZTPList are not the same.
+   * This exception is raised also when TPs in the pgpA/ZTPList do not 
+   * encapsulate the layer rate specified in the tnpCreateData or cannot be 
+   * associated in a protection relation at this layer.
+   * This exception is raised also when the referenced PGs do not implement the
+   * same protection scheme.
+   * This exception is raised also when all the SNCs ending on the specified TPs 
+   * do not have same bandwidth (MPLS layered attributes).
+   * This exception is raised also when worker(s) and protection SNCs does not
+   * have the same DiffServ class mappings, as defined by their reference
+   * PHB profile.
+   * EXCPT_OBJECT_IN_USE - Raised when one or more of the specified TPs is 
+   * already involved in another protection scheme. <br>
+   * EXCPT_USERLABEL_IN_USE - Raised when the userLabel uniqueness constraint 
+   * is not met.<br>
+   * EXCPT_ENTITY_NOT_FOUND - Raised when PG A/Z and/or pgpA/ZTPList references
+   * objects those do not exist.<br>
+   * EXCPT_TIMESLOT_IN_USE - Raised when one or more of the specified TPs with
+   * protection role contains any TP that is used by an SNC in any state. <br>
+   * EXCPT_CAPACITY_EXCEEDED - Raised when the maximum number of Trail Network
+   * Protection (TNP) instances in the target OS has already been reached. <br>
+   * EXCPT_UNABLE_TO_COMPLY - Raised when the target OS is unable to process the 
+   * request because at least one parameter in the tnpCreateData although 
+   * valid and syntactically correct could not be set, or when the request 
+   * fails at the ME. <br>
+   * EXCPT_NE_COMM_LOSS - Raised when communications to Managed Element is 
+   * lost and this prevents the operation completion. <br>
+   * If PG(s) shall be created, then all exceptions from Protection Group
+   * creation operation apply.<br>
+   * 
+   **/
+   void createTrailNtwProtection(
+         in TrailNtwProtCreateData_T tnpCreateData, 
+         out TrailNtwProtection_T theTNP,
+         out string errorReason)
+        raises(globaldefs::ProcessingFailureException);
+
+
+  /**
+   * <p>The requesting OS invokes the modifyTrailNtwProtection service to 
+   * request from the target OS to modify an existing Trail Network Protection 
+   * (TNP) as specified by the parameters passed in the method.</p>
+   *
+   *
+   * <br>globaldefs::NamingAttributes_T tnpName: 
+   *  The name of the TNP to be modified.
+   *
+   * <br> TrailNtwProtModifyData_T tnpModifyData: TNP data to be
+   * changed.
+   *
+   * <br> TrailNtwProtection_T modifiedTNP: The modified TNP. <br>
+   *
+   * <br> string errorReason: Specifies the operation error(s) if any.
+   *
+   * <br><b>Raises</b> globaldefs::ProcessingFailureException <br>
+   * EXCPT_NOT_IMPLEMENTED - Raised if the target OS does not support 
+   * modification of TNP objects via this interface.<br>
+   * EXCPT_INTERNAL_ERROR - Raised in case of non-specific target OS internal 
+   *  failure.<br>
+   * EXCPT_INVALID_INPUT - Raised if tnpName or tnpModifyData 
+   * contain invalid data.
+   * This exception is raised also when 
+   * parameters are syntactically correct but pgA/ZTPList is empty or 
+   * pgpA/ZTPList cardinality in the tnpModifyData exceeds the maximum    
+   * number of TP members allowed for the specified protection group type. 
+   * This exception is raised also when pgZTPList is not empty and 
+   * the cardinality of pgATPList and pgZTPList are not the same.
+   * This exception is raised also when TPs in the pgpA/ZTPList do not 
+   * encapsulate the TNP layer rate or cannot be 
+   * associated in a protection relation at this layer.
+   * This exception is raised also when all the SNCs ending on the specified TPs 
+   * do not have same bandwidth (MPLS layered attributes).
+   * This exception is raised also when worker(s) and protection SNCs does not
+   * have the same DiffServ class mappings, as defined by their reference
+   * PHB profile.<br>
+   * EXCPT_ENTITY_NOT_FOUND - Raised when tnpName references an object
+   *  that does not exist.
+   * This exception is raised also when pgpA/ZTPList references
+   * objects those do not exist.<br>
+   * EXCPT_USERLABEL_IN_USE - Raised when the userLabel uniqueness constraint is 
+   *  not met.<br>
+   * EXCPT_OBJECT_IN_USE - Raised when one or more of 
+   * the specified TPs is already involved in another protection scheme.<br>
+   * EXCPT_TIMESLOT_IN_USE - Raised when one or more of the specified TPs with
+   * protection role contains any TP that is used by an SNC in any state. <br>
+   * EXCPT_UNABLE_TO_COMPLY - Raised if one or more of the TPs can not be
+   * associated or disassociated with the protection group.
+   * This exception is raised also when the target OS is unable to process the 
+   * request because at least one parameter in the tnpModifyData although 
+   * valid and syntactically correct could not be set, or when the request 
+   * fails at the ME.<br>
+   * EXCPT_NE_COMM_LOSS - Raised when communications to Managed Element is 
+   * lost and this prevents the operation completion. <br>
+   * <br>
+   **/
+   void modifyTrailNtwProtection(
+         in globaldefs::NamingAttributes_T tnpName,
+         in TrailNtwProtModifyData_T tnpModifyData,
+         out TrailNtwProtection_T modifiedTNP,
+         out string errorReason)
+        raises (globaldefs::ProcessingFailureException);
+
+
+  /**
+   * <p>The delete Trail Network Protection (TNP) operation is used to 
+   * delete a TNP object on the server.
+   *
+   * Two options are available, either delete also the supporting Protection
+   * Group(s) (and then disassociate the involved TPs), or keep the Protection
+   * Group(s). In the first case, eventually the SNCs supporting the worker(s)
+   * and protected trails will be disassociated from the protection scheme.
+   * It is also possible to specify whether the client traffic will
+   * remain supported by the (former*) worker(s) trails, or by the (former*) 
+   * protection trail (i.e. swap of role). 
+   * (*)"former" applies in the scenario where PGs are deleted, because client
+   * traffic becomes unprotected.
+   *
+   * <br>globaldefs::NamingAttributes_T tnpName: 
+   *  The name of the TNP to be deleted.
+   *
+   * <br>boolean keepPGs: 
+   *  Yes: involved PG(s) are kept.
+   *  No: involved PG(s) are deleted.
+   *
+   * <br> globaldefs::NamingAttributes_T swapTPname: 
+   *  Valid TP name: swap case, i.e. the client traffic previously
+   *  supported by the (former*) worker Trail (which is ended by the 
+   *  specified TP) will remain supported by the (former*) protection trail.
+   *  Empty value: no swap, i.e. client traffic will remain supported by
+   *  (former*) worker trail(s).
+   *  (*) "former" applies in the scenario where PGs are deleted, because client
+   *  traffic becomes unprotected.
+   *
+   * <br>globaldefs::NVSList_T additionalInfo: To allow the communication of 
+   * additional information which is not explicitly modelled
+   *
+   * <br> protection::ProtectionGroupList_T deletedPGList: 
+   * List of deleted PG objects, may be empty if no PGs were deleted.
+   *
+   * <br> TrailNtwProtection_T deletedTNP:
+   * The deleted Trail Network Protection object.
+   *
+   * <br> string errorReason: Specifies the operation error(s) if any.
+   *
+   * <br><b>Raises</b> globaldefs::ProcessingFailureException <br>
+   * EXCPT_NOT_IMPLEMENTED - Raised if the target OS does not support deletion
+   * of TNP objects via this interface.<br>
+   * EXCPT_INTERNAL_ERROR - Raised in case of non-specific target OS internal 
+   *  failure.<br>
+   * EXCPT_INVALID_INPUT - Raised when input parameter is syntactical incorrect.
+   * <br>
+   * EXCPT_ENTITY_NOT_FOUND - Raised when tnpName references an object
+   *  that does not exist.<br>
+   * EXCPT_UNABLE_TO_COMPLY - Raised in case the traffic swap cannot be
+   * performed.<br>
+   * EXCPT_NE_COMM_LOSS - Raised when communications to Managed Element is 
+   * lost and this prevents the operation completion. <br>
+   * If PG(s) shall be deleted, then all exceptions from Protection Group
+   * deletion operation apply.<br>
+   * 
+  **/
+   void deleteTrailNtwProtection(
+         in globaldefs::NamingAttributes_T tnpName,
+         in boolean keepPGs,
+         in globaldefs::NamingAttributes_T swapTPname,
+         inout globaldefs::NVSList_T additionalInfo,
+         out protection::ProtectionGroupList_T deletedPGList,
+         out TrailNtwProtection_T deletedTNP,
+         out string errorReason)
+       raises (globaldefs::ProcessingFailureException);
+       
+   void performTrailNtwProtectionCommand(
+         in protection::ProtectionCommand_T protectionCommand,
+         in globaldefs::NamingAttributes_T tnpName,
+         in globaldefs::NamingAttributes_T protectionGroupAName,
+         in globaldefs::NamingAttributes_T protectionGroupZName,
+         in globaldefs::NamingAttributesMultipleList_T workerTrailList,
+         in globaldefs::NamingAttributesList_T protectionTrail)  
+      raises(globaldefs::ProcessingFailureException);
+
+
+   };
+};       // end of module
+
+#endif
+

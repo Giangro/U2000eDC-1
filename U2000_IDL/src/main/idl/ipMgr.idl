@@ -1,0 +1,320 @@
+#ifndef ipMgr_idl
+#define ipMgr_idl
+
+// ********************************
+// *                              *
+// *    ipMgr.idl                 *
+// *                              *
+// ********************************
+
+// Include list
+#include "common.idl"
+#include "subnetworkConnection.idl"
+
+#pragma prefix "mtnm.tmforum.org"
+
+  /** 
+   * <a href=../../../supportingDocumentation/SD1-27_Overview_NML-EML_Interface.pdf >SD1-27 Overview of 
+   * NML-EML interface</a>
+   *
+   * <p>
+   * </p>
+   *
+   * <h5> Version 3.5. </h5>
+   * 
+   * $Id$
+   **/
+
+
+module ipMgr
+{
+  /**
+   * Bridge_T
+   * <br>
+   **/
+   struct Bridge_T
+   {
+     globaldefs::NamingAttributes_T name;
+     string userLabel;
+     string nativeEMSName;
+     string owner;
+     globaldefs::ConnectionDirection_T 	direction;	
+     globaldefs::NamingAttributesList_T aEnd;
+     globaldefs::NamingAttributesList_T zEnd;	 
+     transmissionParameters::LayeredParameterList_T transmissionParams;
+     globaldefs::NVSList_T additionalInfo;
+   };
+   
+  /**
+   * <p>Sequence of Bridge_T objects.</p>
+   **/
+   typedef sequence<Bridge_T> BridgeList_T;
+
+  /**
+   * <p>In order to allow the NMS to deal with a large number of 
+   * bridge objects, iterators are used.</p>
+   **/
+   interface BridgeIterator_I
+   {
+      boolean next_n(in  unsigned long   how_many,
+                     out BridgeList_T bridgeList)
+        raises (globaldefs::ProcessingFailureException);
+
+      unsigned long getLength()
+        raises (globaldefs::ProcessingFailureException);
+
+      void destroy()
+        raises (globaldefs::ProcessingFailureException);
+   };
+
+  /**
+   * StaticRouting_T
+   * <br>
+   **/
+   struct StaticRouting_T
+   {
+     string destIP;	
+     string destMask;	
+     string nextHopIP;	
+     globaldefs::NamingAttributes_T outPort;
+     string priority;	 
+     globaldefs::NamingAttributes_T bindingObject;
+     globaldefs::NVSList_T additionalInfo;
+   };
+   
+  /**
+   * <p>Sequence of StaticRouting_T objects.</p>
+   **/
+   typedef sequence<StaticRouting_T> StaticRoutingList_T;
+
+  /**
+   * <p>In order to allow the NMS to deal with a large number of 
+   * static routing objects, iterators are used.</p>
+   **/
+   interface StaticRoutingIterator_I
+   {
+      boolean next_n(in  unsigned long   how_many,
+                     out StaticRoutingList_T srList)
+        raises (globaldefs::ProcessingFailureException);
+
+      unsigned long getLength()
+        raises (globaldefs::ProcessingFailureException);
+
+      void destroy()
+        raises (globaldefs::ProcessingFailureException);
+   };
+   
+  /**
+   * <p>A list import RTs.</p>
+   **/
+   typedef sequence<string> ImportRTList_T;   
+   
+  /**
+   * <p>A list export RTs.</p>
+   **/
+   typedef sequence<string> ExportRTList_T;      
+   
+  /**
+   * VRF_T
+   * <br>
+   **/
+   struct VRF_T
+   {
+     globaldefs::NamingAttributes_T name;
+     string userLabel;
+     string nativeEMSName;
+     string owner;
+     string vrfType;
+     string vrfLabel;
+     subnetworkConnection::TPDataList_T aEnd;
+     subnetworkConnection::TPDataList_T zEnd; 
+     string rdFormat;
+     string rdAttr;
+     ImportRTList_T importRTList;
+     ExportRTList_T exportRTList;
+     transmissionParameters::LayeredParameterList_T transmissionParams;
+     globaldefs::NVSList_T additionalInfo;
+   };
+   
+  /**
+   * <p>Sequence of VRF_T objects.</p>
+   **/
+   typedef sequence<VRF_T> VRFList_T;
+
+  /**
+   * <p>In order to allow the NMS to deal with a large number of 
+   * vrf objects, iterators are used.</p>
+   **/
+   interface VRFIterator_I
+   {
+      boolean next_n(in  unsigned long   how_many,
+                     out VRFList_T vrfList)
+        raises (globaldefs::ProcessingFailureException);
+
+      unsigned long getLength()
+        raises (globaldefs::ProcessingFailureException);
+
+      void destroy()
+        raises (globaldefs::ProcessingFailureException);
+   };
+   
+  /**
+   * FRRProtection_T
+   * <br>
+   **/
+   struct FRRProtection_T
+   {
+    globaldefs::NamingAttributes_T name;
+    string userLabel;
+    string nativeEMSName;
+    string owner;
+    string protectionType;
+    transmissionParameters::LayerRate_T rate;
+    globaldefs::NamingAttributesList_T tpList;
+    globaldefs::NVSList_T frrParameters;
+    globaldefs::NamingAttributes_T bindingObject;	
+    globaldefs::NVSList_T additionalInfo;
+   };
+   
+  /**
+   * <p>Sequence of FRRProtection_T objects.</p>
+   **/
+   typedef sequence<FRRProtection_T> FRRList_T;
+
+  /**
+   * <p>In order to allow the NMS to deal with a large number of 
+   * FRR objects, iterators are used.</p>
+   **/
+   interface FRRIterator_I
+   {
+      boolean next_n(in  unsigned long   how_many,
+                     out FRRList_T frrList)
+        raises (globaldefs::ProcessingFailureException);
+
+      unsigned long getLength()
+        raises (globaldefs::ProcessingFailureException);
+
+      void destroy()
+        raises (globaldefs::ProcessingFailureException);
+   };
+   
+  /**
+   * VRRPProtection_T
+   * <br>
+   **/
+   struct VRRPProtection_T
+   {
+    globaldefs::NamingAttributes_T name;
+    string userLabel;
+    string nativeEMSName;
+    string owner;
+    transmissionParameters::LayerRate_T rate;
+    globaldefs::NamingAttributesList_T tpList;
+    globaldefs::NVSList_T vrrpParameters;
+    globaldefs::NVSList_T additionalInfo;
+   };
+   
+  /**
+   * <p>Sequence of VRRPProtection_T objects.</p>
+   **/
+   typedef sequence<VRRPProtection_T> VRRPList_T;
+
+  /**
+   * <p>In order to allow the NMS to deal with a large number of 
+   * VRRP objects, iterators are used.</p>
+   **/
+   interface VRRPIterator_I
+   {
+      boolean next_n(in  unsigned long   how_many,
+                     out VRRPList_T vrrpList)
+        raises (globaldefs::ProcessingFailureException);
+
+      unsigned long getLength()
+        raises (globaldefs::ProcessingFailureException);
+
+      void destroy()
+        raises (globaldefs::ProcessingFailureException);
+   };
+   
+  /**
+   * <p>The IPMgr_I is used to gain access to virtual routing and forwardings,
+   * bridges, fast reroute protection groups, virtual router redundancy protocol protection groups, 
+   * static routings and their operations.</p>
+   *
+
+   * <p>A handle to an instance of this interface is gained via the
+   * emsSession::EmsSession_I::getManager() operation.</p>
+   **/
+
+  interface IPMgr_I : common::Common_I
+  {
+  /**
+   * getAllBridges
+   * <br>
+   **/
+   void getAllBridges(
+         in globaldefs::NamingAttributes_T managedElementName,
+         in unsigned long how_many,		 
+         out BridgeList_T bridgeList,
+         out BridgeIterator_I bridgeIt)
+	  raises(globaldefs::ProcessingFailureException);
+
+  /**
+   * getAllStaticRoutings
+   * <br>
+   **/
+   void getAllStaticRoutings(
+         in globaldefs::NamingAttributes_T managedElementName,
+         in unsigned long how_many,			 
+         out StaticRoutingList_T srList,
+         out StaticRoutingIterator_I srIt)
+	  raises(globaldefs::ProcessingFailureException);
+	  
+  /**
+   * getAllVRFs
+   * <br>
+   **/
+   void getAllVRFs(
+         in globaldefs::NamingAttributes_T managedElementName,
+         in unsigned long how_many,			 
+         out VRFList_T vrfList,
+         out VRFIterator_I vrfIt)
+	  raises(globaldefs::ProcessingFailureException);
+	  
+  /**
+   * getFDFrVRFs
+   * <br>
+   **/
+   void getFDFrVRFs(
+         in globaldefs::NamingAttributes_T fdfrName,
+         in unsigned long how_many,	
+         out VRFList_T vrfList,
+         out VRFIterator_I vrfIt)
+	  raises(globaldefs::ProcessingFailureException);
+	  
+  /**
+   * getAllFRRs
+   * <br>
+   **/
+   void getAllFRRs(
+         in globaldefs::NamingAttributes_T managedElementName,
+         in unsigned long how_many,			 
+         out FRRList_T frrList,
+         out FRRIterator_I frrIt)
+	  raises(globaldefs::ProcessingFailureException);
+	  
+  /**
+   * getAllVRRPs
+   * <br>
+   **/
+   void getAllVRRPs(
+         in globaldefs::NamingAttributes_T managedElementName,
+         in unsigned long how_many,			 
+         out VRRPList_T vrrpList,
+         out VRRPIterator_I vrrpIt)
+	  raises(globaldefs::ProcessingFailureException);
+  };
+
+};
+
+#endif // ipMgr_idl
