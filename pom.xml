@@ -7,6 +7,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>U2000_IDL</module>
+        <module>TMF814Client</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
